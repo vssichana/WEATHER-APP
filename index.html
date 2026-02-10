@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Live Weather Report</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background: radial-gradient(circle at top, #38bdf8, #0f172a);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background: #f9fafb;
+    width: 340px;
+    padding: 22px;
+    border-radius: 16px;
+    text-align: center;
+}
+
+.container h2 {
+    margin-bottom: 12px;
+}
+
+.container input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+.container button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    background: #0284c7;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+.container button:hover {
+    background: #0369a1;
+}
+
+.weather-info {
+    margin-top: 16px;
+    padding-top: 10px;
+    border-top: 1px dashed #bbb;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Weather Status</h2>
+    <input id="place" placeholder="Enter city name">
+    <button id="btn">Check Weather</button>
+
+    <div class="weather-info" id="info">
+        Waiting for input...
+    </div>
+</div>
+
+<script>
+document.getElementById("btn").onclick = fetchWeather;
+
+function fetchWeather() {
+    const place = document.getElementById("place").value;
+    if (place === "") return;
+
+    const api = "818391529e02f91e5812b9c7be6f761b";
+    const requestURL =
+        `https://api.openweathermap.org/data/2.5/weather?q=${place}&appid=${api}&units=metric`;
+
+    document.getElementById("info").innerText = "Fetching data...";
+
+    fetch(requestURL)
+        .then(res => res.json())
+        .then(data => renderWeather(data))
+        .catch(() => {
+            document.getElementById("info").innerText = "Error loading data";
+        });
+}
+
+function renderWeather(data) {
+    if (data.cod !== 200) {
+        document.getElementById("info").innerText = "Invalid city name";
+        return;
+    }
+
+    document.getElementById("info").innerHTML = `
+        <h3>${data.name}</h3>
+        <p>🌡 ${data.main.temp} °C</p>
+        <p>💧 ${data.main.humidity}% humidity</p>
+        <p>🌥 ${data.weather[0].main}</p>
+    `;
+}
+</script>
+
+</body>
+</html>
